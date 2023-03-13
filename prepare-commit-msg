@@ -4,17 +4,27 @@ import openai
 import os
 import sys
 
+# if the first line of COMMIT_EDITMSG is not empty, then exit
+with open(sys.argv[1]) as f:
+    if f.readline().strip() != "":
+        sys.exit(0)
+        
 # Set OpenAI API Key
 openai.api_key = os.environ["OPENAI_API_KEY"]
 if openai.api_key == "":
     print("Please set OPENAI_API_KEY environment variable.")
     sys.exit(1)
 
-# Read the diff of git add
-diff = os.popen("git diff --cached").read()
+# Get the diff of the commit
+diff = os.popen("git diff --cached -- . ':(exclude)*.md'").read()
 
 # Remove blank lines in diff
 diff = "\n".join(line.strip() for line in diff.splitlines())
+
+# Check the length of diff
+if len(diff) > 2000:
+    print("Diff is too long, please split it into several commits.")
+    sys.exit(1)
 
 # Use OpenAI API to generate commit message
 prompt = (

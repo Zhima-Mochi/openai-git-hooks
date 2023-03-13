@@ -1,20 +1,16 @@
-# git-templates-hooks
+#  OpenAI Git Hooks
+## Git hooks with OpenAI
 
-## Git hook templates
+This repository contains prepare-commit-msg template for git hooks that use OpenAI's GPT-3.5 API to generate commit messages.
 
-This repository contains templates for git hooks. They are intended to be used with the [git hooks](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks) and openai features.
-
-### Usage
-
-To use these templates in your git repository, you need to add this repository as a submodule. Here are the steps:
-
+## Usage
 1. In your local repository, navigate to the root directory.
 2. Run the following command to add this repository as a submodule:
 
 ```bash
-git submodule add https://github.com/Zhima-Mochi/git-templates-hooks.git .git-hooks
+git submodule add https://github.com/Zhima-Mochi/git-templates-hooks.git .openai-git-hooks
 ```
-This command adds the git-templates-hooks repository as a submodule to your local repository, in a directory named .git-hooks. You can change the directory name to your liking.
+This command adds the openai-git-hooks repository as a submodule to your repository. The .openai-git-hooks directory is created in your repository and contains the hook templates.
 
 3. Create the hooks directory in your repository:
 ```bash
@@ -25,17 +21,15 @@ mkdir .git/hooks
 
 ```bash
 cd .git/hooks
-ln -s ../../.git-hooks/pre-commit
-ln -s ../../.git-hooks/post-commit
-ln -s ../../.git-hooks/prepare-commit-msg
-ln -s ../../.git-hooks/commit-msg
-ln -s ../../.git-hooks/post-checkout
-ln -s ../../.git-hooks/post-merge
-ln -s ../../.git-hooks/pre-push
-ln -s ../../.git-hooks/pre-rebase
-ln -s ../../.git-hooks/update
+ln -s ../../.openai-git-hooks/prepare-commit-msg
 ```
 
-5. This creates symbolic links in the .git/hooks directory of your repository to the hook templates in the .git-hooks directory.
+5. This creates symbolic links in the .git/hooks directory of your repository to the hook templates in the .openai-git-hooks directory.
 
-That's it! Now your repository is set up to use the hook templates from git-templates-hooks.
+6. execute the following command to set the openai api key as an environment variable:
+
+```bash
+export OPENAI_API_KEY=<your OpenAI API key>
+```
+
+Now, when you commit a change, the prepare-commit-msg hook is executed. If there is no commit message, the hook generates a commit message using OpenAI's GPT-3.5 API.
