@@ -18,7 +18,7 @@ diff = "\n".join(line.strip() for line in diff.splitlines())
 
 # Use OpenAI API to generate commit message
 prompt = (
-    f"Create commit message: 50-char summary, 100-word max description, based on diff:\n\n{diff}\n")
+    f"Create commit message: 50-char summary, 50-word max description, based on diff:\n\n{diff}\n")
 
 # Read the path of commit message template file
 template_file = os.environ.get("GIT_COMMIT_TEMPLATE")
