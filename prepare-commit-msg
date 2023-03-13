@@ -1,0 +1,50 @@
+#!/usr/bin/env python3
+
+import openai
+import os
+import sys
+
+# Set OpenAI API Key
+openai.api_key = os.environ["OPENAI_API_KEY"]
+if openai.api_key == "":
+    print("Please set OPENAI_API_KEY environment variable.")
+    sys.exit(1)
+
+# Read the diff of git add
+diff = os.popen("git diff --cached").read()
+
+# Remove blank lines in diff
+diff = "\n".join(line.strip() for line in diff.splitlines())
+
+# Use OpenAI API to generate commit message
+prompt = (
+    f"Create commit message: 50-char summary, 100-word max description, based on diff:\n\n{diff}\n")
+
+# Read the path of commit message template file
+template_file = os.environ.get("GIT_COMMIT_TEMPLATE")
+if template_file is not None:
+    with open(template_file) as f:
+        prompt = f.read() + "\n\nWith previous template, " + prompt
+
+# Read the path of commit message file and editor type
+message_file = sys.argv[1]
+editor = os.environ.get("EDITOR", "code")
+
+# Use OpenAI API to generate commit message
+model = "gpt-3.5-turbo-0301"
+response = openai.ChatCompletion.create(
+    model=model,
+    messages=[{"role": "user", "content": prompt}],
+    max_tokens=128,
+    n=1,
+    temperature=0.7,
+)
+print(response)
+commit_message = response.choices[0].message.content.strip()
+
+# Write the generated commit message into file
+with open(message_file, "w") as f:
+    f.write(commit_message)
+
+# Open commit message file with editor
+os.system(f"{editor} {message_file}")
