@@ -8,7 +8,7 @@ This repository contains prepare-commit-msg template for git hooks that use Open
 2. Run the following command to add this repository as a submodule:
 
 ```bash
-git submodule add https://github.com/Zhima-Mochi/git-templates-hooks.git .openai-git-hooks
+git submodule add https://github.com/Zhima-Mochi/openai-git-hooks.git .openai-git-hooks
 ```
 This command adds the openai-git-hooks repository as a submodule to your repository. The .openai-git-hooks directory is created in your repository and contains the hook templates.
 
@@ -30,6 +30,18 @@ ln -s ../../.openai-git-hooks/prepare-commit-msg
 
 ```bash
 export OPENAI_API_KEY=<your OpenAI API key>
+```
+
+7. There is a requirements.txt file in the .openai-git-hooks directory. Install the required packages using pip:
+
+```bash
+pip install -r .openai-git-hooks/requirements.txt
+```
+
+8.  execute the following command to download nltk data:
+
+```bash
+python -m nltk.downloader punkt
 ```
 
 Now, when you commit a change, the prepare-commit-msg hook is executed. If there is no commit message, the hook generates a commit message using OpenAI's GPT-3.5 API.
