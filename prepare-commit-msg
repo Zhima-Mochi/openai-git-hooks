@@ -30,7 +30,7 @@ diff = "\n".join(line.strip() for line in diff.splitlines())
 tokens = nltk.word_tokenize(diff)
 
 # Check the length of diff
-if tokens > 1000:
+if len(tokens) > 1000:
     print("Diff is too long, please split it into several commits.")
     sys.exit(1)
 
