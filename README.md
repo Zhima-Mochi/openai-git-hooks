@@ -22,6 +22,7 @@ mkdir .git/hooks
 ```bash
 cd .git/hooks
 ln -s ../../.openai-git-hooks/prepare-commit-msg
+ln -s ../../.openai-git-hooks/.diffignore
 ```
 
 5. This creates symbolic links in the .git/hooks directory of your repository to the hook templates in the .openai-git-hooks directory.

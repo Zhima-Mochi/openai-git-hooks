@@ -17,12 +17,12 @@ if openai.api_key == "":
     sys.exit(1)
 
 # Get the diff of the commit
+# Ignore files in .diffignore
 with open('.diffignore', 'r') as f:
     ignore_rules = ' '.join(':(exclude)'+line.strip()
                             for line in f.readlines())
-print(f"git diff --cached -- . '{ignore_rules}'")
-sys.exit(0)
-
+# diff: show the diff of changed files
+# --cached: only show the diff of staged files
 diff = os.popen(f"git diff --cached -- . '{ignore_rules}'").read()
 # name-only: only show the name of changed files
 diff += os.popen(f"git diff --cached --name-only -- '{ignore_rules}'").read()
