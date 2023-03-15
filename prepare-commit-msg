@@ -35,8 +35,12 @@ tokens = nltk.word_tokenize(diff)
 
 # Check the length of diff
 while len(tokens) > 1000:
-    tokens = tokens[:-1:2]
-    print("Diff is too long, please split it into several commits.")
+    # omit one token in every three tokens
+    new_tokens = []
+    for i in range(0, len(tokens), 3):
+        new_tokens.extend(tokens[i:i+2])
+    tokens = new_tokens
+    print("Diff is too long.")
     print("Truncating diff to", len(tokens), "tokens.")
 diff = ' '.join(tokens)
 
