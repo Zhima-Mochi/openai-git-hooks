@@ -4,11 +4,16 @@ import openai
 import os
 import sys
 import nltk
+import subprocess
 
-# if the first line of COMMIT_EDITMSG is not empty, then exit
-with open(sys.argv[1]) as f:
-    if f.readline().strip() != "":
-        sys.exit(0)
+# Check if the commit has additional message
+if os.environ.get('GIT_EDITOR') == 'true':
+    sys.exit(0)
+
+# Read the path of commit message file and editor type
+message_file = sys.argv[1]
+temp = ".commit-temp"
+editor = os.environ.get("EDITOR", "code")
 
 # Set OpenAI API Key
 openai.api_key = os.environ["OPENAI_API_KEY"]
@@ -16,47 +21,51 @@ if openai.api_key == "":
     print("Please set OPENAI_API_KEY environment variable.")
     sys.exit(1)
 
-# Get the diff of the commit
-# Ignore files in .diffignore in .git/hooks/
-with open('.git/hooks/.diffignore', 'r') as f:
-    ignore_rules = ' '.join(':(exclude)'+line.strip()
-                            for line in f.readlines())
-# diff: show the diff of changed files
-# --cached: only show the diff of staged files
-diff = os.popen(f"git diff --cached -- . '{ignore_rules}'").read()
-# name-only: only show the name of changed files
-diff += os.popen(f"git diff --cached --name-only -- '{ignore_rules}'").read()
+# Check if the temp file exists
+if not os.path.exists(temp):
+    ignore_rules = ""
+    # Check if .diffignore exists
+    if os.path.exists('.git/hooks/.diffignore'):
+        # Get the diff of the commit
+        # Ignore files in .diffignore in .git/hooks/
+        with open('.git/hooks/.diffignore', 'r') as f:
+            ignore_rules = ' '.join(':(exclude)'+line.strip()
+                                    for line in f.readlines())
 
-# Remove blank lines in diff
-diff = "\n".join(line.strip() for line in diff.splitlines())
+    # --cached: compare the staged version with the latest commit
+    # --ignore-all-space: ignore all white space
+    # --ignore-space-change: ignore changes in the amount of white space
+    # --ignore-submodules: ignore changes to submodules
+    # --word-diff: show word diff
+    # --: separate the diff options from the file list
+    # diff: show the diff of changed files
+    os.system(
+        f"git diff --cached --ignore-all-space --ignore-space-change --ignore-submodules --word-diff -- . '{ignore_rules}' > {temp}")
+
+# Read the diff file
+with open(message_file, 'r') as f:
+    diff = f.read()
 
 # Tokenize the diff
 tokens = nltk.word_tokenize(diff)
 
 # Check the length of diff
-while len(tokens) > 1000:
-    # omit one token in every three tokens
-    new_tokens = []
-    for i in range(0, len(tokens), 3):
-        new_tokens.extend(tokens[i:i+2])
-    tokens = new_tokens
-    print("Diff is too long.")
-    print("Truncating diff to", len(tokens), "tokens.")
-diff = ' '.join(tokens)
+if len(tokens) > 1000:
+    print("The diff is too long. Please remove some changes and try again.")
+    os.system(f"{editor} {temp}")
+
+# Remove the temporary file
+os.system(f"rm {temp}")
 
 # Use OpenAI API to generate commit message
 prompt = (
-    f"Create commit message: 50-char summary, 50-word max description, based on diff:\n\n{diff}\n")
+    f"Create commit message: 50-char summary, 100-word max description, based on diff:\n\n{diff}\n")
 
 # Read the path of commit message template file
 template_file = os.environ.get("GIT_COMMIT_TEMPLATE")
 if template_file is not None:
     with open(template_file) as f:
         prompt = f.read() + "\n\nWith previous template, " + prompt
-
-# Read the path of commit message file and editor type
-message_file = sys.argv[1]
-editor = os.environ.get("EDITOR", "code")
 
 # Use OpenAI API to generate commit message
 model = "gpt-3.5-turbo-0301"

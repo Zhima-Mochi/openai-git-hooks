@@ -12,34 +12,26 @@ git submodule add https://github.com/Zhima-Mochi/openai-git-hooks.git .openai-gi
 ```
 This command adds the openai-git-hooks repository as a submodule to your repository. The .openai-git-hooks directory is created in your repository and contains the hook templates.
 
-3. Create the hooks directory in your repository:
-```bash
-mkdir .git/hooks
-```
-
-4. Create symbolic links to the hook templates:
+3. Create symbolic links to the hook templates:
 
 ```bash
-cd .git/hooks
-ln -s ../../.openai-git-hooks/prepare-commit-msg
-ln -s ../../.openai-git-hooks/.diffignore
+./.openai-git-hooks/create-symlinks.sh
 ```
+This creates symbolic links in the .git/hooks directory of your repository to the hook templates in the .openai-git-hooks directory.
 
-5. This creates symbolic links in the .git/hooks directory of your repository to the hook templates in the .openai-git-hooks directory.
-
-6. execute the following command to set the openai api key as an environment variable:
+4. execute the following command to set the openai api key as an environment variable:
 
 ```bash
 export OPENAI_API_KEY=<your OpenAI API key>
 ```
 
-7. There is a requirements.txt file in the .openai-git-hooks directory. Install the required packages using pip:
+5. There is a requirements.txt file in the .openai-git-hooks directory. Install the required packages using pip:
 
 ```bash
 pip install -r .openai-git-hooks/requirements.txt
 ```
 
-8.  execute the following command to download nltk data:
+6.  execute the following command to download nltk data:
 
 ```bash
 python -m nltk.downloader punkt
