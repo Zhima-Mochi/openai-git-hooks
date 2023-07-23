@@ -1,40 +1,27 @@
-#  OpenAI Git Hooks
-## Git hooks with OpenAI
+# OpenAI Git Hooks
 
-This repository contains prepare-commit-msg template for git hooks that use OpenAI's GPT-3.5 API to generate commit messages.
+This repository contains code for an `openai-git-hook` tool, which helps execute Git hooks with the additional power of OpenAI's GPT-3.5. It allows you to leverage the OpenAI API to enhance your Git hooks using natural language processing capabilities.
 
 ## Usage
-1. In your local repository, navigate to the root directory.
-2. Run the following command to add this repository as a submodule:
 
-```bash
-git submodule add https://github.com/Zhima-Mochi/openai-git-hooks.git .openai-git-hooks
-```
-This command adds the openai-git-hooks repository as a submodule to your repository. The .openai-git-hooks directory is created in your repository and contains the hook templates.
+To use this tool, follow the steps below:
 
-3. Create symbolic links to the hook templates:
+1. Clone this repository to your local machine.
+2. Install the required dependencies by running `go mod tidy`.
+3. Build the binary by running `go build -o openai-git-hook main.go`.
+4. Place the generated binary in your desired location.
+5. Make sure to add the ./openai-git-hook [hookname] "$@" command in your Git hooks file (e.g., .git/hooks/prepare-commit-msg) and make it executable.
 
-```bash
-./.openai-git-hooks/create-symlinks.sh
-```
-This creates symbolic links in the .git/hooks directory of your repository to the hook templates in the .openai-git-hooks directory.
+## Hooks Supported
 
-4. execute the following command to set the openai api key as an environment variable:
+The following Git hooks are supported by the `openai-git-hook` tool:
 
-```bash
-export OPENAI_API_KEY=<your OpenAI API key>
-```
+- `prepare-commit-msg`
 
-5. There is a requirements.txt file in the .openai-git-hooks directory. Install the required packages using pip:
+## Configuration
 
-```bash
-pip install -r .openai-git-hooks/requirements.txt
-```
+The `openai-git-hook` tool can be configured by creating a `.openai-git-hook` file in your home directory. The file should contain your OpenAI API key, which will be used to access the OpenAI API.
 
-6.  execute the following command to download nltk data:
+## Contributing
 
-```bash
-python -m nltk.downloader punkt
-```
-
-Now, when you commit a change, the prepare-commit-msg hook is executed. If there is no commit message, the hook generates a commit message using OpenAI's GPT-3.5 API.
+If you want to contribute to this project, feel free to fork the repository and submit a pull request with your changes. We welcome any improvements or new features.
