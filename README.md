@@ -6,11 +6,8 @@ This repository contains code for an `openai-git-hook` tool, which helps execute
 
 To use this tool, follow the steps below:
 
-1. Clone this repository to your local machine.
-2. Install the required dependencies by running `go mod tidy`.
-3. Build the binary by running `go build -o openai-git-hook main.go`.
-4. Place the generated binary in your desired location.
-5. Make sure to add the ./openai-git-hook [hookname] "$@" command in your Git hooks file (e.g., .git/hooks/prepare-commit-msg) and make it executable.
+1. Install the package using `go install github.com/Zhima-Mochi/openai-git-hooks@latest`.
+2. Make sure to add the `openai-git-hook [hookname] "$@"` command in your Git hooks file (e.g., .git/hooks/prepare-commit-msg) and make it executable.
 
 ## Hooks Supported
 
